@@ -31,43 +31,59 @@ arr.forEach((radius) => {
 
 
 const items = [
-    "Молоко",
-    "Орехи",
-    "Кофе",
-    "Сахар",
-    "Хлеб",
-    "Йогурт",
-    "Сок",
-    "Бананы",
-    "Мандарины",
-    "Шоколад",
-    "Печенье",
+  "Молоко",
+  "Орехи",
+  "Кофе",
+  "Сахар",
+  "Хлеб",
+  "Йогурт",
+  "Сок",
+  "Бананы",
+  "Мандарины",
+  "Шоколад",
+  "Печенье",
 ];
 
 class Search {
-    constructor(selector, ul, items) {
-        this.$element = document.querySelector(selector);
-        this.$listElement = document.querySelector(ul);
-        this.items = items;
-        this.items.forEach((item) => {
-            this.$listElement.innerHTML += `<li>${item}</li>`;
-        });
-        this.$element.append(this.$listElement);
-        this.$element.addEventListener("click ", (event) => {
-            this.$element.classList.toggle("active");
-            if (event.target.nodeName === "LI") {
-                onSelect(event.target);
-            }
-        });
-    }
+  _value = "";
+  constructor(selector, onInput, create) {
+    this.$element = document.querySelector(selector);
+    this.$element.addEventListener("input", ({ target }) => {
+      this._value = target.value;
+      onInput(this._value.toLowerCase());
+    });
+  }
 }
 
+class Results {
+  constructor(selector, items = []) {
+    this.$element = document.querySelector(selector);
+    this._items = items;
+    this._searchResults = items;
+    this.render(); 
+  }
 
-const search = new Search("#search", "#results", items)
+  searchItems(text) {
+    this._searchResults = this._items.filter((item) =>
+      item.toLowerCase().includes(text)
+    );
+    this.render();
+  }
 
+  render() {
+    this.$element.innerHTML = this._searchResults.reduce(
+      (result, item) => (result += `<li>${item}</li>`),
+      ""
+    );
+  }
+}
 
-class Results extends Search {
-    constructor() {
+const results = new Results("#results", items);
+
+const search = new Search("#search", (text) => {
+  results.searchItems(text);
+});
+
         
     }
 }
